@@ -12,3 +12,9 @@ Ziad Sprint 1:
     # Flip the display
 # Quit Pygame
 '''
+
+import pygame
+import sys
+from src import settings
+
+pygame.init()
