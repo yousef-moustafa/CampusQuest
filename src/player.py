@@ -18,6 +18,8 @@ class Player(pg.sprite.Sprite):
         self.direction = 'R'
         self.image = self.images['R1']
         self.rect = self.image.get_rect(center = (640,360))
+        self.speed = 3
+        self.animation_index = 0
 
     def load_images(self):
         images = {}
@@ -37,13 +39,31 @@ class Player(pg.sprite.Sprite):
         return images
     
     def player_input(self):
-        # key = pg.key.get_pressed()
-        return
-    
-    def move(self):
-        # move player based off input
-        return
+        keys = pg.key.get_pressed()
+        if keys[pg.K_RIGHT]:
+            self.rect.x += self.speed
+            self.direction = 'R'
+            self.animate_movement()
+        elif keys[pg.K_LEFT]:
+            self.rect.x -= self.speed
+            self.direction = 'L'
+            self.animate_movement()
+        elif keys[pg.K_UP]:
+            self.rect.y -= self.speed
+            self.direction = 'U'
+            self.animate_movement()
+        elif keys[pg.K_DOWN]:
+            self.rect.y += self.speed
+            self.direction = 'D'
+            self.animate_movement()
+        
+    def animate_movement(self):
+        # Update animation frame based off index
+        self.animation_index += 0.2
+        if self.animation_index >= 3:
+            self.animation_index = 0
+        self.image = self.images[f'{self.direction}{int(self.animation_index) + 1}']
     
     def update(self):
-        # update by calling all methods
-        return
+        self.player_input()
+    
