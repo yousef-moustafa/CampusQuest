@@ -13,8 +13,36 @@ Ziad Sprint 1:
 # Quit Pygame
 '''
 
-import pygame
-import sys
-from src import settings
+# main.py
 
-pygame.init()
+import pygame as pg
+from src.player import Player
+from src.settings import Settings
+
+pg.init()
+
+settings = Settings()
+screen = pg.display.set_mode((settings.width, settings.height))
+pg.display.set_caption(settings.title)
+
+clock = pg.time.Clock()
+
+player = pg.sprite.GroupSingle()
+player.add(Player())
+
+# Main game loop
+running = True
+while running:
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            running = False
+    # Draw screen and add player
+    screen.fill(settings.background_color)
+    player.draw(screen)
+    player.update()
+
+    pg.display.flip()
+    clock.tick(60)
+
+# Quit Pygame
+pg.quit()
