@@ -14,7 +14,7 @@ Ziad Sprint 1:
 '''
 
 # main.py
-
+import os
 import pygame as pg
 from src.player import Player
 from src.settings import Settings
@@ -30,7 +30,11 @@ clock = pg.time.Clock()
 player = pg.sprite.GroupSingle()
 player.add(Player())
 
-# Main game loop
+# Map
+from pytmx.util_pygame import load_pygame
+tmx_data = load_pygame('assets/map_data/tmx/map.tmx')
+
+# Main Game loop
 running = True
 while running:
     for event in pg.event.get():
