@@ -1,23 +1,7 @@
-'''
-Ziad Sprint 1:
-# Import necessary modules and classes
-# Initialize Pygame
-# Create the game settings instance
-# Create the game window
-# Load the game map
-# Set up the game loop
-    # Handle events (e.g., quit, key presses)
-    # Update game logic (e.g., move player, update enemies)
-    # Render the game (e.g., draw map, player, enemies)
-    # Flip the display
-# Quit Pygame
-'''
-
-# main.py
-import os
 import pygame as pg
 from src.player import Player
 from src.settings import Settings
+from src.map_loader import MapLoader
 
 pg.init()
 
@@ -27,12 +11,15 @@ pg.display.set_caption(settings.title)
 
 clock = pg.time.Clock()
 
+# Load the map
+map_path = 'assets/map_data/tmx/map.tmx'
+map_loader = MapLoader(map_path)
+map_loader.load_map()
+sprite_group = map_loader.get_sprite_group()
+
+# Add player to the map
 player = pg.sprite.GroupSingle()
 player.add(Player())
-
-# Map
-from pytmx.util_pygame import load_pygame
-tmx_data = load_pygame('assets/map_data/tmx/map.tmx')
 
 # Main Game loop
 running = True
@@ -42,9 +29,9 @@ while running:
             running = False
     # Draw screen and add player
     screen.fill(settings.background_color)
+    sprite_group.draw(screen)
     player.draw(screen)
     player.update()
-
     pg.display.flip()
     clock.tick(60)
 
