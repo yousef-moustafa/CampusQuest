@@ -33,7 +33,7 @@ class Player(pg.sprite.Sprite):
             for i in range(1,4):
                 image_path = os.path.join(dir_path, f"{direction}/{direction}{i}.png")
                 image = pg.image.load(image_path).convert_alpha()
-                image_resized = pg.transform.scale(image, (25,36)) 
+                image_resized = pg.transform.scale(image, (17,25)) 
                 direction_images[f'{direction}{i}'] = image_resized
             images.update(direction_images)
         return images
