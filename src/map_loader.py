@@ -8,6 +8,7 @@ class Tile(pg.sprite.Sprite):
         self.image = surf
         self.rect = self.image.get_rect(topleft = pos)
         self.collidable = collidable
+        
 
 class MapLoader:
     def __init__(self, map_path):
@@ -20,18 +21,15 @@ class MapLoader:
         
         tmx_data = load_pygame(self.map_path) 
         
-        # Loop through all layers
         for layer in tmx_data.visible_layers:
             if isinstance(layer, pytmx.TiledTileLayer):
-                for x,y,gid in layer:
+                for x, y, gid in layer:
                     tile = tmx_data.get_tile_image_by_gid(gid)
-                    if tile: 
-                        pos = (x * 16, y * 16)
-                        tile_properties = tmx_data.get_tile_properties_by_gid(gid)
-                        collidable = False
-                        if tile_properties:
-                            collidable = tile_properties.get('collidable', False)     # is tile collidable?
-                        Tile(pos = pos, surf = tile, groups=self.sprite_group, collidable=collidable)
+                    if tile:
+                        pos = (x * tmx_data.tilewidth, y * tmx_data.tileheight)
+                        # Check layer properties for collidable
+                        collidable = layer.properties.get('collidable', False)
+                        Tile(pos=pos, surf=tile, groups=self.sprite_group, collidable=collidable)
             
         for obj in tmx_data.objects:
             pos = obj.x, obj.y

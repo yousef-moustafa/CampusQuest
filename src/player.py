@@ -1,13 +1,3 @@
-'''
-Yousef Sprint 1:
-# Define a Player class
-    # Initialize with game settings, position (x, y)
-    # Define player properties (e.g., speed, health, etc.)
-    # Implement an update method
-        # Update player logic based on key presses (e.g., move left, right, jump)
-    # Implement a draw method
-        # Draw the player on the screen
-'''
 import pygame as pg
 import os
 from src.map_loader import Tile
@@ -18,7 +8,7 @@ class Player(pg.sprite.Sprite):
         self.images = self.load_images()
         self.direction = 'R'
         self.image = self.images['R1']
-        self.rect = self.image.get_rect(center = (640,360))
+        self.rect = self.image.get_rect(center = (768,880))
         self.speed = 3
         self.animation_index = 0
 
@@ -70,20 +60,24 @@ class Player(pg.sprite.Sprite):
         for sprite in sprite_group:
             if isinstance(sprite, Tile):
                 # if tile is collidable and sprite collides with it
-                if sprite.collidable and pg.sprite.collide_rect(self, sprite): 
-                    # Checking player direction
-                    if self.direction == 'U': self.rect.y += self.speed      # moving up collision
-                    elif self.direction == 'D': self.rect.y -= self.speed    # moving down collision
-                    elif self.direction == 'R': self.rect.x -= self.speed    # moving right collision
-                    else: self.rect.x += self.speed                          # moving left collision
+                if sprite.collidable and pg.sprite.collide_rect(self, sprite): self.collision_reaction()
                     
                 # if tile was not collidable, we do nothing
             
-            # if sprite not a tile instance, collision will always take place (enemy or other players)
+            # if sprite not a tile instance (enemy or another player)
             else:
-                self.rect.x -= self.speed
-                self.rect.y -= self.speed
+                # check for collision
+                if pg.sprite.collide_rect(self, sprite): self.collision_reaction()
     
+    # Method handles movement after collision
+    def collision_reaction(self):
+        # check player direction
+        if self.direction == 'U': self.rect.y += self.speed      # moving up collision
+        elif self.direction == 'D': self.rect.y -= self.speed    # moving down collision
+        elif self.direction == 'R': self.rect.x -= self.speed    # moving right collision
+        else: self.rect.x += self.speed                          # moving left collision
+        
+        
     def update(self):
         self.player_input()
     
