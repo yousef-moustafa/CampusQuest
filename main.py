@@ -1,8 +1,7 @@
 import pygame as pg
 from src.player import Player
 from src.settings import Settings
-from src.map_loader import MapLoader
-from src.map_loader import CameraGroup
+from src.map_loader import MapLoader, CameraGroup, Tile
 
 pg.init()
 
@@ -41,6 +40,9 @@ while running:
             #for max zoom in/out future implementation
             #camera_group.zoom_scale = max (camera_group.min_zoom_scale, min(camera_group.zoom_scale, camera_group.max_zoom_scale))
 
+    # check for collisions
+    player.check_collisions(sprite_group)
+    
     # Update player and other sprites
     player.update()
     camera_group.center_target_camera(player)

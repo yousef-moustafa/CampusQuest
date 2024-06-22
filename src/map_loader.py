@@ -1,11 +1,13 @@
 import pygame as pg
-from pytmx.util_pygame import load_pygame
+from pytmx.util_pygame import load_pygame, pytmx
+import os
 
 class Tile(pg.sprite.Sprite):
-    def __init__(self, pos, surf, groups):
+    def __init__(self, pos, surf, groups, collidable):
         super().__init__(groups)
         self.image = surf
         self.rect = self.image.get_rect(topleft = pos)
+        self.collidable = collidable
 
 class MapLoader:
     def __init__(self, map_path):
@@ -13,17 +15,29 @@ class MapLoader:
         self.sprite_group = pg.sprite.Group()
     
     def load_map(self):
-        tmx_data = load_pygame(self.map_path)        
+        if not os.path.exists(self.map_path):
+            raise FileNotFoundError(f"The file '{self.map_path}' does not exist.")
+        
+        tmx_data = load_pygame(self.map_path) 
+        
         # Loop through all layers
         for layer in tmx_data.visible_layers:
-            if hasattr(layer,'data'):
-                for x,y,surf in layer.tiles():
-                    pos = (x * 16, y * 16)
-                    Tile(pos = pos, surf = surf, groups=self.sprite_group)
+            if isinstance(layer, pytmx.TiledTileLayer):
+                for x,y,gid in layer:
+                    tile = tmx_data.get_tile_image_by_gid(gid)
+                    if tile: 
+                        pos = (x * 16, y * 16)
+                        tile_properties = tmx_data.get_tile_properties_by_gid(gid)
+                        collidable = False
+                        if tile_properties:
+                            collidable = tile_properties.get('collidable', False)     # is tile collidable?
+                        Tile(pos = pos, surf = tile, groups=self.sprite_group, collidable=collidable)
+            
         for obj in tmx_data.objects:
             pos = obj.x, obj.y
             if obj.image:
-                Tile(pos = pos,surf = obj.image, groups =self.sprite_group)
+                collidable = obj.properties.get('collidable', False)        # is object collidable?
+                Tile(pos = pos,surf = obj.image, groups =self.sprite_group, collidable=collidable)
     
     def get_sprite_group(self):
         return self.sprite_group

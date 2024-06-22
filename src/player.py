@@ -10,6 +10,7 @@ Yousef Sprint 1:
 '''
 import pygame as pg
 import os
+from src.map_loader import Tile
 
 class Player(pg.sprite.Sprite):
     def __init__(self):
@@ -63,6 +64,25 @@ class Player(pg.sprite.Sprite):
         if self.animation_index >= 3:
             self.animation_index = 0
         self.image = self.images[f'{self.direction}{int(self.animation_index) + 1}']
+        
+    # Collision detection
+    def check_collisions(self, sprite_group):
+        for sprite in sprite_group:
+            if isinstance(sprite, Tile):
+                # if tile is collidable and sprite collides with it
+                if sprite.collidable and pg.sprite.collide_rect(self, sprite): 
+                    # Checking player direction
+                    if self.direction == 'U': self.rect.y += self.speed      # moving up collision
+                    elif self.direction == 'D': self.rect.y -= self.speed    # moving down collision
+                    elif self.direction == 'R': self.rect.x -= self.speed    # moving right collision
+                    else: self.rect.x += self.speed                          # moving left collision
+                    
+                # if tile was not collidable, we do nothing
+            
+            # if sprite not a tile instance, collision will always take place (enemy or other players)
+            else:
+                self.rect.x -= self.speed
+                self.rect.y -= self.speed
     
     def update(self):
         self.player_input()
